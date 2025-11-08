@@ -10,7 +10,9 @@ const SimilarCalc = () => {
     { name: "GST Calculator", link: "/gst-calculator" },
     { name: "HRA Calculator", link: "/hra-calculator" },
     { name: "Interest Calculator", link: "/interest-calculator" },
-    { name: "ROI Calculator", link: "/roi-calculator" }
+    { name: "ROI Calculator", link: "/roi-calculator" },
+    { name: "NPS Calculator", link: "/nps-calculator" }
+
   ];
 
   return (

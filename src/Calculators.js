@@ -10,7 +10,7 @@ const AllCalculators = () => {
         <div>
          <div className="calc-container container">
             
-                <div className="row p-5 mt-4 m-md-5  ">
+                <div className="row p-4 mt-4 m-md-5  ">
 
                     <div className="singlecalc col-12 col-md-6 col-lg-4 d-flex" onClick={()=> navigate("/ppf-calculator")}>
                         <div className="card shadow border-0 calc-card p-3 m-2">
