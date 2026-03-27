@@ -1,275 +1,228 @@
 import React, { useEffect, useState} from "react";
-import "../styles.css";
 import { Doughnut } from "react-chartjs-2";
 import {Chart as ChartJS,ArcElement,Tooltip,Legend,Title,} from "chart.js";
 import "chart.js/auto";
-import SimilarCalc from "../SimilarCalc";
+import "../styles.css";
+
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
 const PPFCalculator = () => {
+    const [investmentAmount, setInvestmentAmount] = useState(10000);
+    const [duration, setDuration] = useState(15);
+    const [errorMessage, setErrorMessage] = useState("");
+    const interestRate = 7.1;
+    const [maturityAmount, setMaturityAmount] = useState(null);
+    const [totalInvestment, setTotalInvestment] = useState(null);
+    const [totalInterest, setTotalInterest] = useState(null);
 
-  const [investmentAmount, setInvestmentAmount] = useState(10000);
-  const [duration, setDuration] = useState(15);
-  const [errorMessage, setErrorMessage] = useState("");
-  const interestRate = 7.1;
-  const [maturityAmount, setMaturityAmount] = useState(null);
-  const [totalInvestment, setTotalInvestment] = useState(null);
-  const [totalInterest, setTotalInterest] = useState(null);
+    useEffect(() => {
+        calculatePPF();
+    }, [investmentAmount, duration]);
 
-  useEffect( () =>{
-    calculatePPF();
-  }, [ investmentAmount, duration]
-  )
+    useEffect(() => {
+        const ranges = document.querySelectorAll(".custom-range");
+        ranges.forEach((range) => updateRangeBackground(range));
+    }, [investmentAmount, duration]);
 
-  
-  useEffect(() => {
-    updateRangeBackground(investmentAmount, "investmentRange");
-    updateRangeBackground(duration, "durationRange");
-  }, [investmentAmount, duration]);
+    const updateRangeBackground = (range) => {
+        const value = Number(range.value);
+        const min = Number(range.min) || 0;
+        const max = Number(range.max) || 100;
+        const percentage = ((value - min) / (max - min)) * 100;
+        range.style.background = `linear-gradient(to right, #4361ee ${percentage}%, #eef2f6 ${percentage}%)`;
+    };
 
+    const calculatePPF = () => {
+        const principal = parseFloat(investmentAmount);
+        const years = parseInt(duration);
+        const rate = parseFloat(interestRate) / 100;
+        let amount = 0;
 
-  const updateRangeBackground = (value, id) => {
-    const range = document.getElementById(id);
-    const percentage = ((value - range.min) / (range.max - range.min)) * 100;
-    range.style.background = `linear-gradient(to right, #0A80A0 ${percentage}%, transparent ${percentage}%)`;
-  };
+        if (years < 15) {
+            setErrorMessage("PPF has a minimum lock-in period of 15 years.");
+            setMaturityAmount(null);
+            setTotalInvestment(null);
+            setTotalInterest(null);
+            return;
+        } else {
+            for (let i = 1; i <= years; i++) {
+                amount += principal;
+                amount += amount * rate;
+            }
 
-  const calculatePPF = () => {
+            const totalInvested = principal * years;
+            const interestEarned = amount - totalInvested;
 
-   
-    const principal = parseFloat(investmentAmount);
-    const years = parseInt(duration);
-    const rate = parseFloat(interestRate) / 100;
-    let amount = 0;
-
-    if(years<15){
-      setErrorMessage("Not allowed 15 years below.");
-      setMaturityAmount(null);
-      setTotalInvestment(null);
-      setTotalInterest(null);
-      return;
-    }else{
-
-      
-    for (let i = 1; i <= years; i++) {
-      amount += principal;
-      amount += amount * rate;
-    }
-
-    const totalInvested = principal * years;
-    const interestEarned = amount - totalInvested
-
-    // errorMessage =(years>15) ?setErrorMessage("not allowed  below 15 "):setErrorMessage("");
-
-    setMaturityAmount(amount);
-    setTotalInvestment(totalInvested);
-    setTotalInterest(interestEarned);
-
-    }
-
-    setErrorMessage("");
-
-   
-  };
-  
-  const roundNumber = (num) => {
-    return num % 1 >= 0.5 ? Math.ceil(num) : Math.floor(num);
-  };
-
-  const roundAndFormat = (num) => {
-    const roundedNum = roundNumber(num);
-    return roundedNum.toLocaleString('en-IN', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    });
-  };
-
-  // graph
-  const data = {
-    labels: ['Total Investment', 'Total Interest'],
-    datasets: [
-      {
-        data: [roundNumber(totalInvestment),roundNumber(totalInterest)],
-        backgroundColor: ['#19B797', '#0A80A0'],
-        hoverBackgroundColor: ['#19B797', '#0A80A0'],
-      
-      },
-    ],
-  };
-
-  const options = {
-    cutout: '70%', // Adjust this value to decrease the radius
-    responsive: false,   
-    radius: "100%",
-    plugins: {
-      legend: {
-        position:'right',
-        align:'center',
-        labels: {
-          font: {
-            size: 11
-        },
-        boxWidth: 20,      
+            setMaturityAmount(amount);
+            setTotalInvestment(totalInvested);
+            setTotalInterest(interestEarned);
         }
-      },
-    },
-  };
+        setErrorMessage("");
+    };
 
-  const formula = "M= P * [({( 1+i ) ^ n } - 1) / i]";
-  
-  return (
-    
-    <div className="main-content position-relative">
-      <div className="card container   p-4 ">
-      <a href="/" class="back-button">
-          <i class="bi bi-house"></i>
-        </a>
-        <div className="row pt-3 ">
-        <h1 className="fs-17 fw-bold text-center">PPF Calculator</h1>
-          <div className="col-12 col-md-6 p-4 pt-5">         
-            <div className="row">
-              <div className=" col-7 col-md-8">
-                <label className="form-label">Yearly Investment Amount</label>
-              </div>
-              <div className="col-5 col-md-4">
-                <div className="input-group"> 
-                    <input className=" form-control" value={investmentAmount} onChange={(e) => setInvestmentAmount(e.target.value)} />
-                    <span class="input-group-text" >&#x20B9;</span>
+    const roundNumber = (num) => (num % 1 >= 0.5 ? Math.ceil(num) : Math.floor(num));
+
+    const roundAndFormat = (num) => {
+        const roundedNum = roundNumber(num);
+        return roundedNum.toLocaleString('en-IN', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+        });
+    };
+
+    const data = {
+        labels: ['Invested', 'Interest'],
+        datasets: [
+            {
+                data: [roundNumber(totalInvestment), roundNumber(totalInterest)],
+                backgroundColor: ['#4361ee', '#00ccce'],
+                hoverBackgroundColor: ['#3a54d4', '#00b8ba'],
+                borderWidth: 0,
+            },
+        ],
+    };
+
+    const options = {
+        cutout: '75%',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    color: '#fff',
+                    padding: 20,
+                    font: { family: 'Inter', size: 12, weight: '500' },
+                    usePointStyle: true,
+                    pointStyle: 'circle'
+                }
+            },
+        },
+    };
+
+    return (
+        <div className="main-content">
+            <div className="calc-container">
+                <div className="calc-card-main">
+                    <div className="calc-header-row">
+                        <a href="/" className="back-button">
+                            <i className="bi bi-chevron-left"></i>
+                        </a>
+                        <h1 className="text-gradient" >PPF Calculator</h1>
+                    </div>
+
+                    <div className="input-field-group">
+                        <div className="label-row">
+                            <label className="field-label">Yearly Investment</label>
+                            <div className="field-input-box">
+                                <input 
+                                    type="number" 
+                                    value={investmentAmount} 
+                                    onChange={(e) => setInvestmentAmount(e.target.value)} 
+                                />
+                                <span>₹</span>
+                            </div>
+                        </div>
+                        <div className="range-slider-wrap">
+                            <input 
+                                type="range" 
+                                className="custom-range" 
+                                value={investmentAmount} 
+                                onChange={(e) => setInvestmentAmount(e.target.value)} 
+                                min="500" 
+                                max="150000" 
+                            />
+                        </div>
+                    </div>
+
+                    <div className="input-field-group">
+                        <div className="label-row">
+                            <label className="field-label">Time Period (Years)</label>
+                            <div className="field-input-box">
+                                <input 
+                                    type="number" 
+                                    value={duration} 
+                                    onChange={(e) => setDuration(e.target.value)} 
+                                />
+                                <span>Yrs</span>
+                            </div>
+                        </div>
+                        <div className="range-slider-wrap">
+                            <input 
+                                type="range" 
+                                className="custom-range" 
+                                value={duration} 
+                                onChange={(e) => setDuration(e.target.value)} 
+                                min="15" 
+                                max="50" 
+                            />
+                        </div>
+                        {errorMessage && <p style={{color: '#ff4d4d', fontSize: '12px', marginTop: '5px'}}>{errorMessage}</p>}
+                    </div>
+
+                    <div className="input-field-group">
+                        <div className="label-row">
+                            <label className="field-label">Interest Rate</label>
+                            <div className="field-input-box disabled">
+                                <input type="text" value={interestRate} disabled />
+                                <span>%</span>
+                            </div>
+                        </div>
+                        <p style={{fontSize: '12px', color: '#64748b', marginTop: '10px'}}>
+                            (Current fixed rate set by Government of India)
+                        </p>
+                    </div>
                 </div>
-              </div>
-              <div className="col-12">
-                  <input type="range" className="form-range custom-range mt-3" id="investmentRange" value={investmentAmount} onChange={(e) => setInvestmentAmount(e.target.value)} min="1000" max="1000000" />
-                  <div className="d-flex justify-content-between">
-                    <span>&#x20B9;500</span>
-                    <span>&#x20B9;10,00,000</span>
-                  </div>
-              </div>
 
-              <div className=" col-7 col-md-8 mt-4">
-                <label className="form-label">Time period(in years)</label>
-              </div>
-              <div className="col-5 col-md-4 mt-4">
-                <div className="input-group">
-                  <input className="form-control" value={duration} onChange={(e) => setDuration(e.target.value)} />
-                  <span class="input-group-text" >Yrs</span>
+                <div className="result-sidebar">
+                    <div className="premium-result-card">
+                        <h4 style={{textAlign: 'center', marginBottom: '30px', fontWeight: '800', fontFamily: 'Outfit'}}>Maturity Value</h4>
+                        <div className="chart-container" style={{height: '180px'}}>
+                            <Doughnut data={data} options={options} />
+                        </div>
+
+                        <div className="result-list">
+                            <div className="result-item">
+                                <span className="result-label">Total Invested</span>
+                                <span className="result-value">₹{roundAndFormat(totalInvestment)}</span>
+                            </div>
+                            <div className="result-item">
+                                <span className="result-label">Total Interest</span>
+                                <span className="result-value">₹{roundAndFormat(totalInterest)}</span>
+                            </div>
+                            
+                            <div className="total-payable-card">
+                                <span className="total-label">Maturity Amount</span>
+                                <span className="total-amount">₹{roundAndFormat(maturityAmount)}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                {errorMessage && (
-                  <p className="text-danger">{errorMessage}</p>
-                )}
-                 
-              </div>
-              <div className="col-12">
-                  <input type="range" className="form-range custom-range mt-3" id="durationRange" value={duration} onChange={(e) => setDuration(e.target.value)} min="15" max="50" />
-                  <div className="d-flex justify-content-between">
-                    <span>15 yrs</span>
-                    <span>50 yrs</span>
-                  </div>
-              </div>
-
-              <div className=" col-7 col-md-8 mt-4">
-                <label className="form-label">Expected Return Rate</label>
-              </div>
-              <div className="col-5 col-md-4 mt-4">
-                <input className="form-control" value={interestRate} disabled />
-              </div>
-               
             </div>
-          </div>
 
-          <div className="col-12  col-md-6 mb-4 p-3">
-            <div className="card result-section  border-0 p-4">
-            {maturityAmount && (
-              <div className="row  fs-17 fw-bold">
-                <label className="">Total value of your investment</label>
-                <div className="py-3 d-flex justify-content-center"><Doughnut data={data} options={options} /></div>
-                <hr />
- 
-                <div className="col-8 mt-2">
-                  <p>Total Investment Amount</p>
-                </div>
-                <div className="col-4 mt-2">
-                    <p >{"\u20B9"}{roundAndFormat(totalInvestment)}</p>
-                </div>
-                <hr/>
-               
-                <div className="col-8 mt-2">
-                   <p >Estimated Returns</p>
-                </div>
-                <div className="col-4 mt-2">
-                  <p >{"\u20B9"}{roundAndFormat(totalInterest)}</p>
-                </div>
-                <hr/>
+            <div className="calc-info-section">
+                <h1 className="text-gradient">Public Provident Fund (PPF)</h1>
+                <p>
+                    The Public Provident Fund (PPF) is a popular long-term investment option in India that offers safety with attractive interest rates and returns that are fully exempt from tax.
+                </p>
                 
-                <div className="totalreturns d-flex ms-2">
-                  <div className="col-8 mt-2">
-                    <p >Total Returns</p>
-                  </div>
-                  <div className="col-4 mt-2">
-                    <p >{"\u20B9"}{roundAndFormat(maturityAmount)}</p>
-                  </div>
-                </div>
-                 
-                <a type="button" href="https://onboard.northeastltd.com/" target="blank" className=" btn btn-secondary btn-sm mx-auto mt-5">Invest Now</a>
+                <h4>Key Features of PPF</h4>
+                <ul>
+                    <li><strong>Tax Benefits:</strong> Contributions (up to ₹1.5 lakh), interest earned, and maturity proceeds are all tax-exempt (EEE status).</li>
+                    <li><strong>Lock-in Period:</strong> 15 years, but can be extended in blocks of 5 years.</li>
+                    <li><strong>Safety:</strong> Backed by the Government of India, making it a zero-risk investment.</li>
+                    <li><strong>Investment Limits:</strong> Minimum ₹500 and Maximum ₹1,50,000 per financial year.</li>
+                </ul>
 
-              </div>
-                          
-            )}   
+                <h4>How is interest calculated?</h4>
+                <p>The interest is calculated on the lowest balance in the account between the 5th and the end of the month. It's compounded annually and credited to the account at the end of each financial year.</p>
+
+                <h4>Example Calculation</h4>
+                <p>If you invest ₹10,000 every year for 15 years at an interest rate of 7.1% p.a., your total investment is ₹1,50,000. Under current PPF rules, the estimated return is ₹1,21,214, bringing your maturity amount to ₹2,71,214.</p>
             </div>
-          </div>       
-        </div>       
-      </div>
-
-
-      <div className="d-md-flex container mt-3">
-       
-      <div className="col-12 col-md-8 calc-description ">
-        
-          <p>
-          Our PPF calculator is an online tool designed to help you estimate the potential returns on your PPF investments. By considering your investment amount, interest rate, and investment duration, the calculator provides you with an accurate estimation of the maturity amount and interest earned over a specified period.
-           <br></br>
-          This tool is particularly beneficial for those planning to invest in PPF but unsure about the investment amount or the expected returns. It offers clarity on the future value of your investments, aiding in informed financial decisions and efficient savings planning.
-                          
-          </p>
-          <h4>How to Use the PPF Calculator</h4>
-         <ol>
-          <li>Determine Your Investment Amount: Decide how much you can afford to invest regularly (monthly, quarterly, or yearly).</li>
-          <li>Input the Interest Rate: Enter the prevalent PPF interest rate.</li>
-          <li>Set the Duration: The default tenure for a PPF account is 15 years.</li>
-         </ol>
-
-
-         <h4>Formula for PPF Calculation</h4>
-         <p>The maturity amount in a PPF account is calculated using the formula:</p>
-         
-         <p>{formula} </p>
-         <p>M = Maturity amount</p>
-         <p>P = Annual installments</p>
-         <p>i = Interest rate</p>
-         <p>n = Number of years</p>
-
-         <p>Let's consider an example where you plan to invest Rs. 1,50,000 in their PPF investment for a period of 15 years at an interest rate of 7.1%, then his/her maturity sum at the closing year will be equal to Rs. 40,68,209.</p>
-
-         <p>M = 1,50,000* [({(1+0.071)^15}-1)/0.071]= 40,68,209  </p>
-
-         <h4>Benefits of Using a PPF Calculator</h4>
-         <ul>
-          <li>Estimate Future Value: Understand the future value of your PPF investments. </li>
-          <li>Informed Financial Decisions: Make better financial decisions based on potential returns. </li>
-          <li>Savings Planning: Plan your savings effectively with a clear understanding of expected returns.</li>
-          <li>Quick Results: Investors can get quick results by simply inputting their contribution amount, interest rate, and investment duration.</li>
-         </ul>
-         
-      </div>
-      <div className="col-12 col-md-4 ">        
-        <SimilarCalc />     
-      </div>
-
-    </div>
-
-    </div>
-
-  );
+        </div>
+    );
 };
 
 export default PPFCalculator;

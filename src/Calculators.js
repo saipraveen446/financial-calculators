@@ -2,101 +2,92 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import './styles.css';
 
+const calculators = [
+  {
+    route: "/emi-calculator",
+    icon: "/images/loan.png",
+    title: "EMI Calculator",
+    desc: "Calculate home, car & personal loan EMIs",
+  },
+  {
+    route: "/mf-returns-calculator",
+    icon: "/images/profits.png",
+    title: "SIP / MF Calculator",
+    desc: "Estimate Mutual Fund & SIP returns",
+  },
+  {
+    route: "/ppf-calculator",
+    icon: "/images/piggybank.png",
+    title: "PPF Calculator",
+    desc: "Calculate Public Provident Fund returns",
+  },
+  {
+    route: "/fd-calculator",
+    icon: "/images/rupeebag.png",
+    title: "FD Calculator",
+    desc: "Plan your Fixed Deposit maturity",
+  },
+  {
+    route: "/gst-calculator",
+    icon: "/images/tax.png",
+    title: "GST Calculator",
+    desc: "Calculate payable GST amount instantly",
+  },
+  {
+    route: "/hra-calculator",
+    icon: "/images/home.png",
+    title: "HRA Calculator",
+    desc: "Check House Rent Allowance exemption",
+  },
+  {
+    route: "/interest-calculator",
+    icon: "/images/interest-rate.png",
+    title: "Interest Calculator",
+    desc: "Simple & Compound Interest tools",
+  },
+  {
+    route: "/roi-calculator",
+    icon: "/images/roi.png",
+    title: "ROI Calculator",
+    desc: "Check your Return on Investment %",
+  },
+  {
+    route: "/nps-calculator",
+    icon: "/images/retirement.png",
+    title: "NPS Calculator",
+    desc: "National Pension Scheme corpus tool",
+  },
+];
 
 const AllCalculators = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    return (
-        <div>
-         <div className="calc-container container">
-            
-                <div className="row p-4 mt-4 m-md-5  ">
+  return (
+    <div className="home-page">
+      <div className="home-title-row">
+        <h1 className="home-title">
+          Smart <span className="text-gradient">Financial Tools</span>
+        </h1>
+        <p className="home-subtitle">Premium, fast & accurate calculators for your daily needs</p>
+      </div>
 
-                    <div className="singlecalc col-12 col-md-6 col-lg-4 d-flex" onClick={()=> navigate("/ppf-calculator")}>
-                        <div className="card shadow border-0 calc-card p-3 m-2">
-                            <img className="img-fluid" width="40px;" height="auto" src="/images/piggybank.png" alt="calc"/>
-                            <h3 className="pt-2  fs-4">PPF Calculator</h3>
-                            <p className="pt-2  fs-6 text-muted">Calculate public provident fund retuns</p>
-                        </div>
-                    </div>
-
-
-                    <div className="singlecalc col-12 col-md-6 col-lg-4 " onClick={()=> navigate("/mf-returns-calculator")}>
-                        <div className="card shadow border-0 calc-card p-3 m-2">
-                            <img className="img-fluid" width="40px;" height="auto" src="/images/rupeebagcoin.png" alt="calc"/>
-                            <h3 className="pt-2  fs-4">SIP/MF Calculator</h3>
-                            <p className="pt-2  fs-6 text-muted">Calculate Sip /Mutual funds retuns </p>
-                        </div>
-                    </div>
-
-
-
-                    <div className="singlecalc col-12 col-md-6 col-lg-4" onClick={()=> navigate("/fd-calculator")} >
-
-                        <div className="card shadow border-0 calc-card p-3 m-2">
-                            <img className="img-fluid" width="40px;" height="auto" src="/images/money.png" alt="calc"/>
-                            <h3 className="pt-2  fs-4">FD Calculator</h3>
-                            <p className="pt-2  fs-6 text-muted">Calculate Fixed Deposite retuns</p>
-                        </div>
-                    </div>
-
-                    <div className="singlecalc col-12 col-md-6 col-lg-4" onClick={()=> navigate("/emi-calculator")}>
-                        <div className="card shadow border-0 calc-card p-3 m-2">
-                            <img className="img-fluid" width="40px;" height="auto" src="/images/calc.png" alt="calc"/>
-                            <h3 className="pt-2  fs-4">EMI Calculator</h3>
-                            <p className="pt-2  fs-6 text-muted">Calculate your personal, car, home loan</p>
-                        </div>
-                    </div>
-
-                    
-
-                    <div className="singlecalc col-12 col-md-6 col-lg-4" onClick={()=> navigate("/gst-calculator")}>
-                        <div className="card shadow border-0 calc-card p-3 m-2">
-                            <img className="img-fluid" width="40px;" height="auto" src="/images/tax.png" alt="calc"/>
-                            <h3 className="pt-2  fs-4">GST Calculator</h3>
-                            <p className="pt-2  fs-6 text-muted">Calculate payable GST Amount </p>
-                        </div>
-                    </div>
-
-                    <div className="col-12 col-md-6 col-lg-4" onClick={()=> navigate("/hra-calculator")}>
-                        <div className="card shadow border-0 calc-card p-3 m-2">
-                            <img className="img-fluid" width="40px;" height="auto" src="/images/hra.png" alt="calc"/>
-                            <h3 className="pt-2  fs-4">HRA Calculator</h3>
-                            <p className="pt-2  fs-6 text-muted">Calculate your House rent allowance</p>
-                        </div>
-                    </div>
-
-                    <div className="singlecalc col-12 col-md-6 col-lg-4" onClick={()=> navigate("/interest-calculator")}>
-                        <div className="card shadow border-0 calc-card p-3 m-2">
-                            <img className="img-fluid" width="40px;" height="auto" src="/images/get-money.png" alt="calc"/>
-                            <h3 className="pt-2  fs-4">Interest Calculator</h3>
-                            <p className="pt-2  fs-6 text-muted">Calculate simple and Compound Interest.</p>
-                        </div>
-                    </div>
-
-                    <div className="singlecalc col-12 col-md-6 col-lg-4" onClick={()=> navigate("/roi-calculator")}>
-                        <div className="card shadow border-0 calc-card p-3 m-2">
-                            <img className="img-fluid" width="40px;" height="auto" src="/images/roi.png" alt="calc"/>
-                            <h3 className="pt-2  fs-4">ROI Calculator</h3>
-                            <p className="pt-2  fs-6 text-muted">Calculate your Return on Investment</p>
-                        </div>
-                    </div>
-
-
-
-                    <div className="col-12 col-md-6 col-lg-4" onClick={()=> navigate("/nps-calculator")}>
-                        <div className="card shadow border-0 calc-card p-3 m-2">
-                            <img className="img-fluid" width="40px;" height="auto" src="/images/retirement.png" alt="calc"/>
-                            <h3 className="pt-2  fs-4">NPS Calculator</h3>
-                            <p className="pt-2  fs-6 text-muted">Calculate your National pension scheme</p>
-                        </div>
-                    </div>
-            
-                </div>    
+      <div className="home-grid">
+        {calculators.map((calc, idx) => (
+          <div
+            key={idx}
+            className="premium-card hc-card"
+            onClick={() => navigate(calc.route)}
+          >
+            <div className="hc-header">
+              <img src={calc.icon} alt={calc.title} className="hc-icon-img" />
+              <h3 className="hc-title">{calc.title}</h3>
             </div>
-        </div>         
-            
-    );
-}
+            <p className="hc-desc">{calc.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default AllCalculators;

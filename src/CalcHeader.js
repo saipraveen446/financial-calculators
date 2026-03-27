@@ -1,28 +1,32 @@
-import React from "react";
-import { Navbar, Nav } from "react-bootstrap";
+import React, { useState } from "react";
 import './styles.css';
 
+const calculatorLinks = [
+  { label: "EMI Calculator",      emoji: "💳", href: "/emi-calculator" },
+  { label: "SIP / MF Calculator", emoji: "📈", href: "/mf-returns-calculator" },
+  { label: "PPF Calculator",      emoji: "🐷", href: "/ppf-calculator" },
+  { label: "FD Calculator",       emoji: "🏦", href: "/fd-calculator" },
+  { label: "GST Calculator",      emoji: "🧾", href: "/gst-calculator" },
+  { label: "HRA Calculator",      emoji: "🏠", href: "/hra-calculator" },
+  { label: "Interest Calculator", emoji: "💰", href: "/interest-calculator" },
+  { label: "ROI Calculator",      emoji: "📊", href: "/roi-calculator" },
+  { label: "NPS Calculator",      emoji: "👴", href: "/nps-calculator" },
+];
+
 const CalcHeader = () => {
+  const [open, setOpen] = useState(false);
+
   return (
-    <Navbar
-      collapseOnSelect
-      expand="lg"
-      className="navbar navbar-expand-lg fixed-top navbar-custom sticky sticky-dark align-items-center nav-sticky"
-    >
-      <div className="container">
-        <Navbar.Brand className="logo mr-3" href="/">
-        <h4 className="m-0 text-gradient">Financial Calculators</h4>
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="ms-auto">
-            {/* <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link href="#features">Features</Nav.Link>
-            <Nav.Link href="#about">About</Nav.Link> */}
-          </Nav>
-        </Navbar.Collapse>
+    <header className="calc-header">
+      <div className="header-inner">
+        {/* Brand */}
+        <a href="/" className="header-brand">
+          <div className="brand-icon">₹</div>
+          <span className="brand-text">Financial <strong>Calculators</strong></span>
+        </a>
+
       </div>
-    </Navbar>
+    </header>
   );
 };
 

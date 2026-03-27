@@ -10,10 +10,12 @@ import "./styles.css";
 function App() {
  
   return (
-    <div >
-      <div >{CalcHeader()}</div>
-      <div>{RoutePages()}</div>
-      <div >{CalcFooter()}</div> 
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <CalcHeader />
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <RoutePages />
+      </div>
+      <CalcFooter />
     </div>
    
   );
